@@ -78,6 +78,7 @@
           player_ball.vx= event.gamma;
           player_ball.vy= event.beta;
       };
+      window.addEventListener('deviceorientation', handleOrientation);
 
       function game_logic() {
         player_ball.boundary_check();
