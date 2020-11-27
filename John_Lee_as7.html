@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Tilt Game</title>
+</head>
+
+<body>
+  <h1>Tilt Game</h1>
+
+  <canvas id="canvas" width="1200" height="600" style="border:1px solid black;">
+    Display this text if browser does not support canvas.
+  </canvas>
+
+  <script>
+    window.onload = function () {
+      var canvas = document.getElementById("canvas");
+      var c = canvas.getContext("2d");
+      var wins = 0;
+
+      class ball {
+
+        constructor(x, y, vx, vy, bvx, bvy, radius, color) {
+          this.x = x;
+          this.y = y;
+          this.vx = vx;
+          this.vy = vy;
+          this.bvx = bvx;
+          this.bvy = bvy;
+          this.radius = radius;
+          this.color = color;
+        }
+
+        draw() {
+          c.beginPath();
+          c.fillStyle = this.color;
+          c.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+          c.fill();
+        }
+
+        move() {
+          this.x = this.x + this.vx;
+          this.y = this.y + this.vy;
+        }
+
+        boundary_check() {
+          if ((this.y + this.radius) + this.vy > canvas.height ||
+            (this.y - this.radius) + this.vy < 0) {
+            this.vy = this.bvy * this.vy;
+          }
+          if ((this.x + this.radius) + this.vx > canvas.width ||
+            (this.x - this.radius) + this.vx < 0) {
+            this.vx = this.bvx * this.vx;
+          }
+        }
+      }
+
+      class hole {
+        constructor(x, y, width, color) {
+          this.x = x;
+          this.y = y;
+          this.width = width;
+          this.color = color;
+        }
+
+        draw() {
+          c.beginPath();
+          c.fillStyle = this.color;
+          c.rect(this.x, this.y, this.width, this.width);
+          c.fill();
+        }
+      }
+      var player_ball = new ball(Math.floor(Math.random() * 1150) + 25, Math.floor(Math.random() * 550) + 25, 0, 0, 0, 0, 25, 'green');
+      var goal = new hole(Math.floor(Math.random() * 1150), Math.floor(Math.random() * 550), 50, 'black');
+
+      window.ondeviceorientation = function (event) {
+        //Assuming netural is phone flat in portrait mode on a horzontal table
+          player_ball.vx= event.gamma;
+          player_ball.vy= event.beta;
+      };
+
+      function game_logic() {
+        player_ball.boundary_check();
+
+        var dx = (goal.x + 25) - (player_ball.x);
+        var dy = (goal.y + 25) - (player_ball.y);
+        var distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < goal.width / 2 + player_ball.radius) {
+          wins++;
+          player_ball.x = Math.floor(Math.random() * 1150) + 25;
+          player_ball.y = Math.floor(Math.random() * 550) + 25;
+          goal.x = Math.floor(Math.random() * 1150);
+          goal.y = Math.floor(Math.random() * 550);
+        }
+
+        player_ball.move();
+      }
+
+      function draw() {
+        c.clearRect(0, 0, canvas.width, canvas.height);
+
+        player_ball.draw();
+        goal.draw();
+
+        c.font = "20px serif";
+        c.fillText("Wins: " + wins, 5, 20);
+      }
+
+      setInterval(function () {
+
+        game_logic();
+        draw();
+
+      }, 30);
+
+    }
+  </script>
+
+</body>
+
+</html>
