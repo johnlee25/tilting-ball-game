@@ -73,7 +73,7 @@
       var player_ball = new ball(Math.floor(Math.random() * 1150) + 25, Math.floor(Math.random() * 550) + 25, 0, 0, 0, 0, 25, 'green');
       var goal = new hole(Math.floor(Math.random() * 1150), Math.floor(Math.random() * 550), 50, 'black');
 
-      window.ondeviceorientation = function (event) {
+      function handleOrientation (event) {
         //Assuming netural is phone flat in portrait mode on a horzontal table
           player_ball.vx= event.gamma;
           player_ball.vy= event.beta;
